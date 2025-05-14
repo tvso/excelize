@@ -27,14 +27,16 @@ jobs:
         env GO111MODULE=on go vet ./...
 
     - name: Build
+      run: go build -v .
+      
+    - name: Build on ARM
+      if: runner.os == 'Linux'
       run: |
-        go build -v .
-        if [[ "$RUNNER_OS" == "Linux" ]]; then
-          GOARM=5 GOARCH=arm go build -v .
-          GOARM=6 GOARCH=arm go build -v .
-          GOARM=7 GOARCH=arm go build -v .
-          GOARCH=arm64 go build -v .
-        fi
+        GOARM=5 GOARCH=arm go build -v .
+        GOARM=6 GOARCH=arm go build -v .
+        GOARM=7 GOARCH=arm go build -v .
+        GOARCH=arm64 go build -v .
+        GOOS=android GOARCH=arm64 go build -v .
 
     - name: Test
       run: env GO111MODULE=on go test -v -timeout 50m -race ./... -coverprofile='coverage.txt' -covermode=atomic
