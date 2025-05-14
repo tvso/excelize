@@ -29,12 +29,7 @@ jobs:
     - name: Build
       run: |
         go build -v .
-        if [[ "$RUNNER_OS" == "Linux" ]]; then
-          GOARM=5 GOARCH=arm go build -v .
-          GOARM=6 GOARCH=arm go build -v .
-          GOARM=7 GOARCH=arm go build -v .
-          GOARCH=arm64 go build -v .
-        elif [[ "$RUNNER_OS" == "macOS" ]]; then
+        if [[ "$RUNNER_OS" == "Linux" ]] || [[ "$RUNNER_OS" == "macOS" ]]; then
           GOARM=5 GOARCH=arm go build -v .
           GOARM=6 GOARCH=arm go build -v .
           GOARM=7 GOARCH=arm go build -v .
