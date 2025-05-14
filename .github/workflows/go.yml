@@ -5,7 +5,7 @@ jobs:
   test:
     strategy:
       matrix:
-        go-version: [1.23.x, 1.24.x]
+        go-version: [1.24.x]
         os: [ubuntu-24.04, macos-13, windows-latest]
         targetplatform: [x86, x64]
 
@@ -25,8 +25,21 @@ jobs:
     - name: Get dependencies
       run: |
         env GO111MODULE=on go vet ./...
+
     - name: Build
-      run: go build -v .
+      run: |
+        go build -v .
+        if [[ "$RUNNER_OS" == "Linux" ]]; then
+          GOARM=5 GOARCH=arm go build -v .
+          GOARM=6 GOARCH=arm go build -v .
+          GOARM=7 GOARCH=arm go build -v .
+          GOARCH=arm64 go build -v .
+        elif [[ "$RUNNER_OS" == "macOS" ]]; then
+          GOARM=5 GOARCH=arm go build -v .
+          GOARM=6 GOARCH=arm go build -v .
+          GOARM=7 GOARCH=arm go build -v .
+          GOARCH=arm64 go build -v .
+        fi
 
     - name: Test
       run: env GO111MODULE=on go test -v -timeout 50m -race ./... -coverprofile='coverage.txt' -covermode=atomic
